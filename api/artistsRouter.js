@@ -13,10 +13,15 @@ artistsRouter.get('/', (req, res, next) => {
 });
 
 
-/*artistsRouter.post('/', (req, res, next) => {
+artistsRouter.post('/', (req, res, next) => {
+  console.log(req.artist); //gives undefined
+  console.log(req.body); //gives undefined
   const artist = req.body.artist;
-  db.run("INSERT INTO Artist (id, name, date_of_birth, biography, is_currently_employed) VALUES ($id, $name, $date_of_birth, $biography, $is_currently_employed)", {
-    $id: artist.id,
+  if( !artist.name || !artist.date_of_birth || !artist.biography){
+    res.status(400).send();
+  }
+
+  db.run("INSERT INTO Artist (name, date_of_birth, biography, is_currently_employed) VALUES ($id, $name, $date_of_birth, $biography, $is_currently_employed)", {
     $name: artist.name,
     $biography: artist.biography,
     $is_currently_employed: artist.is_currently_employed
@@ -33,7 +38,7 @@ artistsRouter.get('/', (req, res, next) => {
   	  res.status(201).send({strip: row});
   	});
   });
-});*/
+});
 
 artistsRouter.param('artistId', (req, res, next, artistId) => {
   db.get("SELECT * FROM Artist WHERE Artist.id = $artistId", {
